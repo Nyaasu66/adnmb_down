@@ -9,6 +9,13 @@ let str = "";  // 最终导出到txt的字符串
 let page = 1   // 页码初始化
 const chan = process.argv[2] // 串号
 
+if (!chan.match(/^[0-9]+$/)) {
+  console.error("串号输入有误，请输入纯数字的串号，如：31163008")
+  return
+} else {
+  console.log(`正在下载: No.${chan}`)
+}
+
 // 将请求的 option 转为函数, 实现翻页时 options.path 的 page 动态变化 
 const options = (page) => {
   return {
