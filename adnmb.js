@@ -36,25 +36,34 @@ const pre_req = https.request(options(1), (res) => {
       zlib.gunzip(d,async function (err, decoded) {
         let html = decoded.toString();
         const dom = new JSDOM(html);
-        // 获取[末页]按钮的实际跳转页数
-        let page_str = dom.window.document
-          .querySelector(".uk-pagination li:last-child a")
-          .getAttribute("href")
-          .match(/.+page=(.+)/)[1];
-        page = parseInt(page_str);
-        // 如果跳转页数为2，那么获取到的不是[末页]按钮，而是下一页
-        // 那么倒数第二个页码按钮为最大页数
-        if (page === 2) {
-          page_str = dom.window.document
-          .querySelector(".uk-pagination li:nth-last-child(2) a")
-          .getAttribute("href")
-          .match(/.+page=(.+)/)[1];
+        // 判断是否只有一页
+        let page_first = dom.window.document
+          .querySelector(".uk-pagination li:last-child")
+          .getAttribute("class")
+        if (page_first === 'uk-disabled') {
+          page = 1
+        } else {
+          // 获取[末页]按钮的实际跳转页数
+          let page_str = dom.window.document
+            .querySelector(".uk-pagination li:last-child a")
+            .getAttribute("href")
+            .match(/.+page=(.+)/)[1];
           page = parseInt(page_str);
+          // 如果跳转页数为2，那么获取到的不是[末页]按钮，而是下一页，
+          // 那么倒数第二个页码按钮为最大页数
+          if (page === 2) {
+            page_str = dom.window.document
+            .querySelector(".uk-pagination li:nth-last-child(2) a")
+            .getAttribute("href")
+            .match(/.+page=(.+)/)[1];
+            page = parseInt(page_str);
+          }
         }
         console.log('page: ', page);
         // 等待所有页轮询完成
         await pageTurner(page)
         // 写入文件
+        fs.mkdir('./download', { recursive: true },(err) => {if (err) console.log(err)})
         fs.writeFile(`./download/No.${chan}.txt`, str, function () {
           // console.log('str: ', str);
           console.log(`下载完成！保存在 ./download/No.${chan}.txt`);
