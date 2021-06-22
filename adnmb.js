@@ -38,9 +38,19 @@ const pre_req = https.request(options(1), (res) => {
     console.log("岛沉了，告辞");
   } else {
     console.log(`状态码: ${res.statusCode}, 开始获取索引`);
+    let buffArr = [];
+    let buff = null;
     res.on("data", (d) => {
+      buffArr.length += 1;
+      buffArr[buffArr.length - 1] = d;
+    });
+    res.on('end', () => {
+      // 防止网站连续提供2个Buffer造成的报错
+      buffArr.length > 1
+      ? buff = Buffer.concat(buffArr)
+      : buff = buffArr[0];
       // gunzip用于解压缩gzip编码
-      zlib.gunzip(d,async function (err, decoded) {
+      zlib.gunzip(buff, async function (err, decoded) {
         let html = decoded.toString();
         const dom = new JSDOM(html);
         // 判断是否只有一页
