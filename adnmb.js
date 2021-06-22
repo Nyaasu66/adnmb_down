@@ -92,8 +92,18 @@ const rowTurner = function(c) {
   return new Promise((resolve, reject) => {
     console.log('nowPage: ', c);
     const req = https.request(options(c), (res) => {
+      let bufferArr = [];
+      let buffer = null;
       res.on("data", (d) => {
-        zlib.gunzip(d, function (err, decoded) {
+        bufferArr.length += 1;
+        bufferArr[bufferArr.length - 1] = d;
+      });
+      res.on('end', () => {
+        // 防止网站连续提供2个Buffer造成的报错
+        bufferArr.length > 1
+        ? buffer = Buffer.concat(bufferArr)
+        : buffer = bufferArr[0];
+        zlib.gunzip(buffer, function (err, decoded) {
           // console.log(decoded.toString());// gzip解压后的html文本
           let html = decoded.toString();
           const dom = new JSDOM(html);
@@ -109,6 +119,9 @@ const rowTurner = function(c) {
             row = `[${c},${index}]\n${strOr}\n`;
             str += row;
           });
+          if (err) {
+            console.log('err: ', err);
+          }
           resolve()
         });
       });
