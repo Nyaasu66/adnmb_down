@@ -35,9 +35,9 @@ const options = (page) => {
 
 // 最外层的 pre_req 用于获取最大页码
 const pre_req = https.request(options(1), (res) => {
-  if (res.statusCode == 502) {
+  if (res.statusCode === 502) {
     console.log("岛沉了，告辞");
-  } else {
+  } else if (res.statusCode === 200) {
     console.log(`状态码: ${res.statusCode}, 开始获取索引`);
     let buffArr = [];
     let buff = null;
@@ -89,6 +89,8 @@ const pre_req = https.request(options(1), (res) => {
 
       });
     });
+  } else {
+    console.log("出啥情况啦？咱也不造啊|д`)")
   }
 });
 
