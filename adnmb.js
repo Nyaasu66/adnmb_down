@@ -5,15 +5,16 @@ const fs = require("fs");
 const zlib = require("zlib");
 const { JSDOM } = jsdom;
 
+const chan = process.argv[2]; // 串号
+
 let str = "";  // 最终导出到txt的字符串
-let page = 1   // 页码初始化
-const chan = process.argv[2] // 串号
+let page = 1;   // 页码初始化
 
 if (!chan.match(/^[0-9]+$/)) {
-  console.error("串号输入有误，请输入纯数字的串号，如：31163008")
+  console.error("串号输入有误，请输入纯数字的串号，如：31163008");
   return
 } else {
-  console.log(`正在下载: No.${chan}`)
+  console.log(`正在下载: No.${chan}`);
 }
 
 // 将请求的 option 转为函数, 实现翻页时 options.path 的 page 动态变化 
@@ -26,7 +27,7 @@ const options = (page) => {
 };
 
 // 备胎岛
-// const options = {
+// const options = (page) => {
 //   host: "tnmb.org",
 //   port: 443,
 //   path: `/t/${chan}?page=${page}`,
@@ -56,9 +57,9 @@ const pre_req = https.request(options(1), (res) => {
         // 判断是否只有一页
         let page_first = dom.window.document
           .querySelector(".uk-pagination li:last-child")
-          .getAttribute("class")
+          .getAttribute("class");
         if (page_first === 'uk-disabled') {
-          page = 1
+          page = 1;
         } else {
           // 获取[末页]按钮的实际跳转页数
           let page_str = dom.window.document
@@ -78,7 +79,7 @@ const pre_req = https.request(options(1), (res) => {
         }
         console.log('page: ', page);
         // 等待所有页轮询完成
-        await pageTurner(page)
+        await pageTurner(page);
         // 写入文件
         fs.mkdir('./download', { recursive: true },(err) => {if (err) console.log(err)})
         fs.writeFile(`./download/No.${chan}.txt`, str, function () {
@@ -132,7 +133,7 @@ const rowTurner = function(c) {
           if (err) {
             console.log('err: ', err);
           }
-          resolve()
+          resolve();
         });
       });
     });
@@ -149,7 +150,7 @@ const rowTurner = function(c) {
 const pageTurner = async function(page) {
   for (let c = 1; c < page+1; c++) {
     // 等待当前页所有回应（楼层）轮询完成
-    await rowTurner(c)
-    str += '\n\n\n\n'
+    await rowTurner(c);
+    str += '\n\n\n\n';
   }
 }
