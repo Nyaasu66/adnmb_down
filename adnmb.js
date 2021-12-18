@@ -118,15 +118,19 @@ const rowTurner = function (c) {
           // console.log(dom.window.document.querySelector(".h-threads-content").textContent);
           let outArr = dom.window.document.querySelectorAll('.h-threads-content');
           let tidArr = dom.window.document.querySelectorAll('.h-threads-info-id'); // 获取串号
+          let offset = 0; // 广告层数偏移量修正
           outArr.forEach((i, index) => {
             let tid = tidArr[index].textContent;
-            // console.log(i.textContent)
-            // strArr[index] = i.textContent.replace(/ /gm,"")
-            strOr = i.textContent.trim();
-            // 条件判断当前楼层是否为当页主题层(第0层)，是的话显示 [x,po]
-            index == 0 ? (row = `[${c}, po] ${tid}\n${strOr}\n`) : (row = `[${c}, ${index}] ${tid}\n${strOr}\n`);
-            if (tid !== 'No.9999999') {
+            if (tid === 'No.9999999') {
               // 过滤广告
+              offset++;
+              // console.log(`已过滤 ${offset} 条广告`);
+            } else {
+              // console.log(i.textContent)
+              // strArr[index] = i.textContent.replace(/ /gm,"")
+              strOr = i.textContent.trim();
+              // 条件判断当前楼层是否为当页主题层(第0层)，是的话显示 [x,po]
+              index == 0 ? (row = `[${c}, po] ${tid}\n${strOr}\n`) : (row = `[${c}, ${index - offset}] ${tid}\n${strOr}\n`);
               str += row;
             }
           });
