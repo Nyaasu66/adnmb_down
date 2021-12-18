@@ -122,8 +122,9 @@ const rowTurner = function(c) {
           const dom = new JSDOM(html);
           // console.log(dom.window.document.querySelector(".h-threads-content").textContent);
           let outArr = dom.window.document.querySelectorAll(".h-threads-content");
-          let tid = dom.window.document.querySelectorAll(".h-threads-info-id")[0].textContent; // 获取串号
+          let tidArr = dom.window.document.querySelectorAll(".h-threads-info-id"); // 获取串号
           outArr.forEach((i, index) => {
+            let tid = tidArr[index].textContent;
             // console.log(i.textContent)
             // strArr[index] = i.textContent.replace(/ /gm,"")
             strOr = i.textContent.trim();
@@ -131,7 +132,9 @@ const rowTurner = function(c) {
             (index == 0)
               ? row = `[${c}, po]${tid}\n${strOr}\n`
               : row = `[${c}, ${index}] ${tid}\n${strOr}\n`;
-            str += row;
+            if (tid !== 'No.9999999') { // 过滤广告
+              str += row;
+            }
           });
           if (err) {
             console.log('err: ', err);
