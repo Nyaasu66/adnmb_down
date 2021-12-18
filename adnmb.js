@@ -12,7 +12,7 @@ let page = 1;   // 页码初始化
 
 if (!chan.match(/^[0-9]+$/)) {
   console.error("串号输入有误，请输入纯数字的串号，如：31163008");
-  return
+  process.exit(0);
 } else {
   console.log(`正在下载: No.${chan}`);
 }
@@ -90,7 +90,7 @@ const pre_req = https.request(options(1), (res) => {
       });
     });
   } else {
-    console.log("出啥情况啦？咱也不造啊|д`)")
+    console.log("出啥情况啦？咱也不造啊|д`)");
   }
 });
 
@@ -128,9 +128,9 @@ const rowTurner = function(c) {
             // strArr[index] = i.textContent.replace(/ /gm,"")
             strOr = i.textContent.trim();
             // 条件判断当前楼层是否为当页主题层(第0层)，是的话显示 [x,po]
-            (index == 0) ?
-            row = `[${c},${tid},po]\n${strOr}\n` :
-            row = `[${c},${tid},${index}]\n${strOr}\n`;
+            (index == 0)
+              ? row = `[${c}, po]${tid}\n${strOr}\n`
+              : row = `[${c}, ${index}] ${tid}\n${strOr}\n`;
             str += row;
           });
           if (err) {
@@ -140,11 +140,11 @@ const rowTurner = function(c) {
         });
       });
     });
-    
+
     req.on("error", (error) => {
       console.error(error);
     });
-    
+
     req.end();
   })
 }
