@@ -122,14 +122,15 @@ const rowTurner = function(c) {
           const dom = new JSDOM(html);
           // console.log(dom.window.document.querySelector(".h-threads-content").textContent);
           let outArr = dom.window.document.querySelectorAll(".h-threads-content");
+          let tid = dom.window.document.querySelectorAll(".h-threads-info-id")[0].textContent; // 获取串号
           outArr.forEach((i, index) => {
             // console.log(i.textContent)
             // strArr[index] = i.textContent.replace(/ /gm,"")
             strOr = i.textContent.trim();
             // 条件判断当前楼层是否为当页主题层(第0层)，是的话显示 [x,po]
             (index == 0) ?
-            row = `[${c},po]\n${strOr}\n` :
-            row = `[${c},${index}]\n${strOr}\n`;
+            row = `[${c},${tid},po]\n${strOr}\n` :
+            row = `[${c},${tid},${index}]\n${strOr}\n`;
             str += row;
           });
           if (err) {
