@@ -18,13 +18,24 @@ if (!chan.match(/^[0-9]+$/)) {
 }
 
 // 将请求的 option 转为函数, 实现翻页时 options.path 的 page 动态变化
+
+//nimingban
 const options = page => {
   return {
-    host: 'adnmb3.com',
+    host: 'nimingban.org',
     port: 443,
     path: `/t/${chan}?page=${page}`,
   };
 };
+
+//adnmb3
+//const options = page => {
+//  return {
+//    host: 'adnmb3.com',
+//    port: 443,
+//    path: `/t/${chan}?page=${page}`,
+//  };
+//};
 
 // 备胎岛
 // const options = (page) => {
